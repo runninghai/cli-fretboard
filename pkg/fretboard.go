@@ -95,7 +95,7 @@ func printFretboard(x, y int) {
 	}
 	fmt.Printf("  ")
 	for i := 0; i < 12; i++ {
-		fmt.Printf(" %02d ", i)
+		fmt.Printf(" %02d ", i+1)
 	}
 	fmt.Println()
 
