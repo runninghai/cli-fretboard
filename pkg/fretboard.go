@@ -3,12 +3,28 @@ package pkg
 import (
 	"fmt"
 	"math/rand"
+	"time"
 )
 
-func Fretboard() {
+type Mode int
+
+const EASY Mode = 0
+const HARD Mode = 1
+
+func Fretboard(m Mode) {
 	var score int
 	var combo int
+	var cur = time.Now()
 	for {
+		punishScore := int(time.Now().Sub(cur).Seconds())
+		cur = time.Now()
+
+		if m == EASY {
+			score = score - easy(punishScore)
+		} else {
+			score = score - hard(punishScore)
+		}
+
 		fmt.Printf("Score: %d, Combo: %d\n", score, combo)
 		fmt.Println()
 		x := rand.Intn(6)
@@ -33,6 +49,17 @@ func inSlice(slice []string, target string) bool {
 		}
 	}
 	return false
+}
+
+func easy(seconds int) int {
+	return seconds
+}
+
+func hard(seconds int) int {
+	if seconds <= 0 {
+		return 0
+	}
+	return seconds + hard(seconds-1)
 }
 
 func getNote(x, y int) []string {
