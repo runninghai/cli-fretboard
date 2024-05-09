@@ -37,7 +37,8 @@ func Fretboard(m Mode) {
 			score += combo
 			continue
 		}
-		fmt.Printf("Answwer: %v", getNote(x, y))
+		fmt.Printf("Answer: %v", getNote(x, y))
+		fmt.Println()
 		combo = 0
 	}
 }
