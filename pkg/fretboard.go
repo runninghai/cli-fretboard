@@ -15,8 +15,10 @@ func Fretboard(m Mode) {
 	var score int
 	var combo int
 	var cur = time.Now()
+	var cut float64 = 0
 	for {
-		punishScore := int(time.Now().Sub(cur).Seconds())
+		punishScore := int(time.Now().Sub(cur).Seconds() - cut)
+		cut = 0
 		cur = time.Now()
 
 		if m == EASY {
@@ -37,8 +39,11 @@ func Fretboard(m Mode) {
 			score += combo
 			continue
 		}
-		fmt.Printf("Answer: %v", getNote(x, y))
-		fmt.Println()
+		fmt.Printf("Answwer: %v", getNote(x, y))
+		before := time.Now()
+		fmt.Scanf("\n")
+		after := time.Now()
+		cut = after.Sub(before).Seconds()
 		combo = 0
 	}
 }
