@@ -3,6 +3,8 @@ package pkg
 import (
 	"fmt"
 	"math/rand"
+	"os"
+	"os/signal"
 	"time"
 )
 
@@ -11,9 +13,27 @@ type Mode int
 const EASY Mode = 0
 const HARD Mode = 1
 
-func Fretboard(m Mode) {
+func Fretboard(m Mode, head bool, level int) {
 	var score int
 	var combo int
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		<-c
+
+		h, _ := os.UserHomeDir()
+		f, err := os.OpenFile(h+"/.fretboard.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0755)
+		if err != nil {
+			os.Stdout.Write([]byte(err.Error()))
+			os.Exit(0)
+		}
+
+		defer f.Close()
+		s := fmt.Sprintf("score: %v\n", score)
+		f.Write([]byte(s))
+		os.Exit(0)
+	}()
 	var cur = time.Now()
 	var cut float64 = 0
 	for {
@@ -30,8 +50,8 @@ func Fretboard(m Mode) {
 		fmt.Printf("Score: %d, Combo: %d\n", score, combo)
 		fmt.Println()
 		x := rand.Intn(6)
-		y := rand.Intn(12)
-		printFretboard(x, y)
+		y := rand.Intn(getLevel(level))
+		printFretboard(x, y, head)
 		var res string
 		fmt.Scanf("%s", &res)
 		if inSlice(getNote(x, y), res) {
@@ -46,6 +66,15 @@ func Fretboard(m Mode) {
 		cut = after.Sub(before).Seconds()
 		combo = 0
 	}
+}
+
+// 1 3
+// 2 5
+// 3 10
+// 4 12
+// 5 24
+func getLevel(l int) int {
+	return level[l]
 }
 
 func inSlice(slice []string, target string) bool {
@@ -78,6 +107,13 @@ func getNote(x, y int) []string {
 	res = append(res, dict[index+1]+"b")
 	res = append(res, dict[index-1]+"#")
 	return res
+}
+
+var level = map[int]int{
+	1: 3,
+	2: 5,
+	3: 10,
+	4: 12,
 }
 
 var head = map[int]string{
@@ -113,10 +149,15 @@ var dict = map[int]string{
 	11: "B",
 }
 
-func printFretboard(x, y int) {
+func printFretboard(x, y int, h bool) {
 
 	for i := 0; i < 6; i++ {
-		fmt.Printf(head[i] + ":")
+		if h {
+			fmt.Printf(head[i] + ":")
+		} else {
+			fmt.Printf(fmt.Sprintf("%d", i+1) + ":")
+
+		}
 		for j := 0; j < 12; j++ {
 			str := "---|"
 			if x == i && y == j {
