@@ -13,7 +13,7 @@ type Mode int
 const EASY Mode = 0
 const HARD Mode = 1
 
-func Fretboard(m Mode, head bool, level int) {
+func Fretboard(m Mode, head bool, level, cnt int) {
 	var score int
 	var combo int
 
@@ -21,22 +21,11 @@ func Fretboard(m Mode, head bool, level int) {
 	signal.Notify(c, os.Interrupt)
 	go func() {
 		<-c
-
-		h, _ := os.UserHomeDir()
-		f, err := os.OpenFile(h+"/.fretboard.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0755)
-		if err != nil {
-			os.Stdout.Write([]byte(err.Error()))
-			os.Exit(0)
-		}
-
-		defer f.Close()
-		s := fmt.Sprintf("score: %v\n", score)
-		f.Write([]byte(s))
-		os.Exit(0)
+		log(score, m)
 	}()
 	var cur = time.Now()
 	var cut float64 = 0
-	for {
+	for i := 0; i < cnt; i++ {
 		punishScore := int(time.Now().Sub(cur).Seconds() - cut)
 		cut = 0
 		cur = time.Now()
@@ -66,6 +55,22 @@ func Fretboard(m Mode, head bool, level int) {
 		cut = after.Sub(before).Seconds()
 		combo = 0
 	}
+	log(score, m)
+}
+
+func log(score int, mode Mode) {
+	h, _ := os.UserHomeDir()
+	f, err := os.OpenFile(h+"/.fretboard.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0755)
+	if err != nil {
+		os.Stdout.Write([]byte(err.Error()))
+		os.Exit(0)
+	}
+
+	defer f.Close()
+	res := fmt.Sprintf("mode: %v, score: %v\n", mode, score)
+	f.Write([]byte(res))
+	os.Exit(0)
+
 }
 
 // 1 3

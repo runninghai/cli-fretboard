@@ -34,6 +34,7 @@ var cfgFile string
 var mode int
 var head bool
 var level int
+var cnt int
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -48,7 +49,7 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		pkg.Fretboard(pkg.Mode(mode), head, level)
+		pkg.Fretboard(pkg.Mode(mode), head, level, cnt)
 	},
 }
 
@@ -72,6 +73,7 @@ func init() {
 	rootCmd.PersistentFlags().IntVarP(&mode, "mode", "m", 0, "mode")
 	rootCmd.PersistentFlags().BoolVar(&head, "head", false, "with head mode")
 	rootCmd.PersistentFlags().IntVarP(&level, "level", "l", 4, "with head mode")
+	rootCmd.PersistentFlags().IntVarP(&cnt, "cnt", "c", 20, "count")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
