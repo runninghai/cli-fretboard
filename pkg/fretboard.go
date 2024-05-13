@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 )
 
@@ -21,10 +22,12 @@ func Fretboard(m Mode, head bool, level, cnt int) {
 	signal.Notify(c, os.Interrupt)
 	go func() {
 		<-c
-		log(score, m)
+		log(score, head, level, cnt, m)
 	}()
 	var cur = time.Now()
 	var cut float64 = 0
+	var prex int
+	var prey int
 	for i := 0; i < cnt; i++ {
 		punishScore := int(time.Now().Sub(cur).Seconds() - cut)
 		cut = 0
@@ -40,9 +43,16 @@ func Fretboard(m Mode, head bool, level, cnt int) {
 		fmt.Println()
 		x := rand.Intn(6)
 		y := rand.Intn(getLevel(level))
+		for prex == x && prey == y {
+			x = rand.Intn(6)
+			y = rand.Intn(getLevel(level))
+		}
+		prex = x
+		prey = y
 		printFretboard(x, y, head)
 		var res string
 		fmt.Scanf("%s", &res)
+		res = convert(res)
 		if inSlice(getNote(x, y), res) {
 			combo++
 			score += combo
@@ -55,10 +65,17 @@ func Fretboard(m Mode, head bool, level, cnt int) {
 		cut = after.Sub(before).Seconds()
 		combo = 0
 	}
-	log(score, m)
+	log(score, head, level, cnt, m)
 }
 
-func log(score int, mode Mode) {
+func convert(s string) string {
+	s = strings.Title(s)
+	s = strings.ReplaceAll(s, "1", "b")
+	s = strings.ReplaceAll(s, "2", "#")
+	return s
+}
+
+func log(score int, head bool, level, cnt int, mode Mode) {
 	h, _ := os.UserHomeDir()
 	f, err := os.OpenFile(h+"/.fretboard.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0755)
 	if err != nil {
@@ -67,7 +84,18 @@ func log(score int, mode Mode) {
 	}
 
 	defer f.Close()
-	res := fmt.Sprintf("mode: %v, score: %v\n", mode, score)
+	modeStr := "easy"
+	if mode == HARD {
+		modeStr = "hard"
+	}
+
+	headStr := "序号"
+	if head {
+		headStr = "音名"
+	}
+	levelStr := fmt.Sprintf("%v", getLevel(level))
+
+	res := fmt.Sprintf("mode: %v\tscore: %v\thead: %v\t品数: %v\t测试次数: %v\n", modeStr, score, headStr, levelStr, cnt)
 	f.Write([]byte(res))
 	os.Exit(0)
 
