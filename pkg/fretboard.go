@@ -118,7 +118,7 @@ func getResult(score int, head bool, level, cnt int, mode Mode) string {
 // 4 12
 // 5 24
 func getLevel(l int) int {
-	return level[l]
+	return l
 }
 
 func inSlice(slice []string, target string) bool {
@@ -156,7 +156,7 @@ func getNote(x, y int) []string {
 var level = map[int]int{
 	1: 3,
 	2: 5,
-	3: 10,
+	3: 7,
 	4: 12,
 }
 

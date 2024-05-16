@@ -72,7 +72,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.fretboard.yaml)")
 	rootCmd.PersistentFlags().IntVarP(&mode, "mode", "m", 0, "mode")
 	rootCmd.PersistentFlags().BoolVar(&head, "head", false, "with head mode")
-	rootCmd.PersistentFlags().IntVarP(&level, "level", "l", 4, "with head mode")
+	rootCmd.PersistentFlags().IntVarP(&level, "level", "l", 12, "with head mode")
 	rootCmd.PersistentFlags().IntVarP(&cnt, "cnt", "c", 20, "count")
 
 	// Cobra also supports local flags, which will only run
