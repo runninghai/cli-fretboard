@@ -51,7 +51,12 @@ func Fretboard(m Mode, head bool, level, cnt int) {
 		prey = y
 		printFretboard(x, y, head)
 		var res string
-		fmt.Scanf("%s", &res)
+		for {
+			fmt.Scanf("%s", &res)
+			if res != "" {
+				break
+			}
+		}
 		res = convert(res)
 		if inSlice(getNote(x, y), res) {
 			combo++
@@ -65,6 +70,7 @@ func Fretboard(m Mode, head bool, level, cnt int) {
 		cut = after.Sub(before).Seconds()
 		combo = 0
 	}
+	fmt.Println(getResult(score, head, level, cnt, m))
 	log(score, head, level, cnt, m)
 }
 
@@ -84,6 +90,12 @@ func log(score int, head bool, level, cnt int, mode Mode) {
 	}
 
 	defer f.Close()
+	f.Write([]byte(getResult(score, head, level, cnt, mode)))
+	os.Exit(0)
+
+}
+
+func getResult(score int, head bool, level, cnt int, mode Mode) string {
 	modeStr := "easy"
 	if mode == HARD {
 		modeStr = "hard"
@@ -96,8 +108,7 @@ func log(score int, head bool, level, cnt int, mode Mode) {
 	levelStr := fmt.Sprintf("%v", getLevel(level))
 
 	res := fmt.Sprintf("mode: %v\tscore: %v\thead: %v\t品数: %v\t测试次数: %v\n", modeStr, score, headStr, levelStr, cnt)
-	f.Write([]byte(res))
-	os.Exit(0)
+	return res
 
 }
 
