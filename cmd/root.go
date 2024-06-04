@@ -31,9 +31,11 @@ import (
 )
 
 var cfgFile string
+
 var mode int
 var head bool
-var level int
+var yRight int
+var yLeft int
 var cnt int
 
 // rootCmd represents the base command when called without any subcommands
@@ -49,7 +51,10 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		pkg.Fretboard(pkg.Mode(mode), head, level, cnt)
+		if yRight < yLeft {
+			os.Exit(1)
+		}
+		pkg.Fretboard(pkg.Mode(mode), head, yLeft, yRight, cnt)
 	},
 }
 
@@ -72,8 +77,9 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.fretboard.yaml)")
 	rootCmd.PersistentFlags().IntVarP(&mode, "mode", "m", 0, "mode")
 	rootCmd.PersistentFlags().BoolVar(&head, "head", false, "with head mode")
-	rootCmd.PersistentFlags().IntVarP(&level, "level", "l", 12, "with head mode")
-	rootCmd.PersistentFlags().IntVarP(&cnt, "cnt", "c", 20, "count")
+	rootCmd.PersistentFlags().IntVarP(&yRight, "right", "r", 12, "right fred number")
+	rootCmd.PersistentFlags().IntVarP(&yLeft, "left", "l", 1, "left fred number")
+	rootCmd.PersistentFlags().IntVarP(&cnt, "cnt", "c", 20, "test count")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
