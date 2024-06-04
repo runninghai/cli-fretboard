@@ -82,6 +82,7 @@ func Fretboard(m Mode, head bool, yLeft, yRight, cnt int) {
 		after := time.Now()
 		cut = after.Sub(before).Seconds()
 	}
+	printResult(failedBlock)
 	fmt.Println(getResult(score, head, yLeft, yRight, cnt, m))
 	log(score, head, yLeft, yRight, cnt, m)
 }
